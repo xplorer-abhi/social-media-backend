@@ -1,6 +1,6 @@
 from typing import Any
 
-from app.models.base import execute_write, fetch_all, fetch_one
+from app.models.base import execute_returning_one, execute_write, fetch_all, fetch_one
 
 
 def create_posts_table() -> None:
@@ -23,7 +23,7 @@ def insert_post(user_id: int, content: str, image_url: str | None = None) -> int
     VALUES (%s, %s, %s)
     RETURNING id;
     """
-    row = fetch_one(query, (user_id, content, image_url))
+    row = execute_returning_one(query, (user_id, content, image_url))
     if row is None:
         raise RuntimeError("Failed to create post")
     return int(row[0])

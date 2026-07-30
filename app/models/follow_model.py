@@ -1,6 +1,6 @@
 from typing import Any
 
-from app.models.base import execute_write, fetch_all, fetch_one
+from app.models.base import execute_returning_one, execute_write, fetch_all, fetch_one
 
 
 def create_follows_table() -> None:
@@ -23,7 +23,7 @@ def add_follow(follower_id: int, following_id: int) -> int:
 	VALUES (%s, %s)
 	RETURNING id;
 	"""
-	row = fetch_one(query, (follower_id, following_id))
+	row = execute_returning_one(query, (follower_id, following_id))
 	if row is None:
 		raise RuntimeError("Failed to create follow")
 	return int(row[0])

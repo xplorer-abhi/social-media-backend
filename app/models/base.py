@@ -16,6 +16,24 @@ def execute_write(query: str, params: tuple[Any, ...] | None = None) -> None:
         connection.close()
 
 
+def execute_returning_one(
+    query: str,
+    params: tuple[Any, ...] | None = None,
+) -> tuple[Any, ...] | None:
+    connection = get_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(query, params)
+            row = cursor.fetchone()
+        connection.commit()
+        return row
+    except Exception:
+        connection.rollback()
+        raise
+    finally:
+        connection.close()
+
+
 def fetch_one(query: str, params: tuple[Any, ...] | None = None) -> tuple[Any, ...] | None:
     connection = get_connection()
     try:

@@ -1,6 +1,6 @@
 from typing import Any
 
-from app.models.base import execute_write, fetch_all, fetch_one
+from app.models.base import execute_returning_one, execute_write, fetch_all, fetch_one
 
 
 def create_users_table() -> None:
@@ -26,7 +26,7 @@ def insert_user(username: str, email: str, password_hash: str) -> int:
     VALUES (%s, %s, %s)
     RETURNING id;
     """
-    row = fetch_one(query, (username, email, password_hash))
+    row = execute_returning_one(query, (username, email, password_hash))
     if row is None:
         raise RuntimeError("Failed to create user")
     return int(row[0])

@@ -24,6 +24,10 @@ class Settings:
 	DATABASE_PASSWORD: str
 	DATABASE_HOST: str
 	DATABASE_PORT: int
+	JWT_SECRET_KEY: str
+	JWT_ALGORITHM: str
+	ACCESS_TOKEN_EXPIRE_MINUTES: int
+	REFRESH_TOKEN_EXPIRE_DAYS: int
 
 
 def _required_env(key: str) -> str:
@@ -41,6 +45,10 @@ def _build_settings() -> Settings:
 		DATABASE_PASSWORD=_required_env("DATABASE_PASSWORD"),
 		DATABASE_HOST=_required_env("DATABASE_HOST"),
 		DATABASE_PORT=int(os.getenv("DATABASE_PORT", "5432")),
+		JWT_SECRET_KEY=_required_env("JWT_SECRET_KEY"),
+		JWT_ALGORITHM=os.getenv("JWT_ALGORITHM", "HS256"),
+		ACCESS_TOKEN_EXPIRE_MINUTES=int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "15")),
+		REFRESH_TOKEN_EXPIRE_DAYS=int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "30")),
 	)
 
 

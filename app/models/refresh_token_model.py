@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any
 
-from app.models.base import execute_write, fetch_all, fetch_one
+from app.models.base import execute_returning_one, execute_write, fetch_all, fetch_one
 
 
 def create_refresh_tokens_table() -> None:
@@ -23,7 +23,7 @@ def insert_refresh_token(user_id: int, token: str, expires_at: datetime) -> int:
     VALUES (%s, %s, %s)
     RETURNING id;
     """
-    row = fetch_one(query, (user_id, token, expires_at))
+    row = execute_returning_one(query, (user_id, token, expires_at))
     if row is None:
         raise RuntimeError("Failed to create refresh token")
     return int(row[0])

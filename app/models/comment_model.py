@@ -1,6 +1,6 @@
 from typing import Any
 
-from app.models.base import execute_write, fetch_all, fetch_one
+from app.models.base import execute_returning_one, execute_write, fetch_all, fetch_one
 
 
 def create_comments_table() -> None:
@@ -22,7 +22,7 @@ def insert_comment(post_id: int, user_id: int, content: str) -> int:
 	VALUES (%s, %s, %s)
 	RETURNING id;
 	"""
-	row = fetch_one(query, (post_id, user_id, content))
+	row = execute_returning_one(query, (post_id, user_id, content))
 	if row is None:
 		raise RuntimeError("Failed to create comment")
 	return int(row[0])

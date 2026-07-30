@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from fastapi import HTTPException
 
+from app.api.v1.auth import router as auth_router
 from app.db.connection import test_db_connection
 
 app = FastAPI()
+app.include_router(auth_router, prefix="/api/v1")
 
 
 @app.get("/")

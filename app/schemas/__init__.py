@@ -8,6 +8,7 @@ from app.schemas.notification_schema import (
 )
 from app.schemas.post_schema import PostCreate, PostResponse, PostUpdate
 from app.schemas.token_schema import (
+    AuthMessageResponse,
     RefreshTokenRequest,
     RefreshTokenResponse,
     TokenPairResponse,
@@ -34,6 +35,7 @@ __all__ = [
     "PostCreate",
     "PostResponse",
     "PostUpdate",
+    "AuthMessageResponse",
     "RefreshTokenRequest",
     "RefreshTokenResponse",
     "TokenPairResponse",

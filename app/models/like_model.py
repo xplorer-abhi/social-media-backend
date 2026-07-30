@@ -1,6 +1,6 @@
 from typing import Any
 
-from app.models.base import execute_write, fetch_all, fetch_one
+from app.models.base import execute_returning_one, execute_write, fetch_all, fetch_one
 
 
 def create_likes_table() -> None:
@@ -22,7 +22,7 @@ def add_like(post_id: int, user_id: int) -> int:
 	VALUES (%s, %s)
 	RETURNING id;
 	"""
-	row = fetch_one(query, (post_id, user_id))
+	row = execute_returning_one(query, (post_id, user_id))
 	if row is None:
 		raise RuntimeError("Failed to add like")
 	return int(row[0])
