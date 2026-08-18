@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 
-from app.models.base import create_all_tables
-from app.models.post_model import fetch_post_by_id, insert_post
+from app.core.schemas.token_schema import RefreshTokenRequest
+from app.core.schemas.user_schema import UserCreate, UserLogin
 from app.models.refresh_token_model import (
 	delete_expired_refresh_tokens,
 	delete_refresh_token,
@@ -9,9 +9,6 @@ from app.models.refresh_token_model import (
 	insert_refresh_token,
 )
 from app.models.user_model import fetch_user_by_email, fetch_user_by_id, insert_user
-from app.schemas.post_schema import PostCreate
-from app.schemas.token_schema import RefreshTokenRequest
-from app.schemas.user_schema import UserCreate, UserLogin
 from app.utils.hashing import hash_password, verify_password
 from app.utils.tokens import create_access_token, create_refresh_token, decode_token
 
@@ -38,11 +35,6 @@ def _issue_token_pair(user_id: int) -> dict[str, str]:
 		"refresh_token": refresh_token,
 		"token_type": "bearer",
 	}
-
-
-def bootstrap_tables() -> dict[str, str]:
-	create_all_tables()
-	return {"status": "ok", "message": "All tables ensured successfully"}
 
 
 def register_user(payload: UserCreate) -> dict:
@@ -118,23 +110,3 @@ def get_current_user_from_access_token(token: str) -> dict:
 		raise ValueError("User not found")
 
 	return _user_row_to_dict(user_row)
-
-
-def create_post_for_user(user_id: int, payload: PostCreate) -> dict:
-	user_row = fetch_user_by_id(user_id)
-	if user_row is None:
-		raise ValueError("User does not exist")
-
-	post_id = insert_post(user_id=user_id, content=payload.content, image_url=payload.image_url)
-	post_row = fetch_post_by_id(post_id)
-	if post_row is None:
-		raise RuntimeError("Post created but could not be fetched")
-
-	return {
-		"id": post_row[0],
-		"user_id": post_row[1],
-		"content": post_row[2],
-		"image_url": post_row[3],
-		"created_at": post_row[4],
-		"updated_at": post_row[5],
-	}

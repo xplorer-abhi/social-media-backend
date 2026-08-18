@@ -8,6 +8,10 @@ class CommentCreate(BaseModel):
 	content: str = Field(min_length=1)
 
 
+class CommentUpdate(BaseModel):
+	content: str = Field(min_length=1)
+
+
 class CommentResponse(BaseModel):
 	id: int
 	post_id: int

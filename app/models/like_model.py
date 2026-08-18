@@ -28,6 +28,15 @@ def add_like(post_id: int, user_id: int) -> int:
 	return int(row[0])
 
 
+def fetch_like(post_id: int, user_id: int) -> tuple[Any, ...] | None:
+	query = """
+	SELECT id, post_id, user_id, created_at
+	FROM likes
+	WHERE post_id = %s AND user_id = %s;
+	"""
+	return fetch_one(query, (post_id, user_id))
+
+
 def remove_like(post_id: int, user_id: int) -> None:
 	query = "DELETE FROM likes WHERE post_id = %s AND user_id = %s;"
 	execute_write(query, (post_id, user_id))

@@ -14,3 +14,9 @@ class FollowResponse(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class FollowStatusResponse(BaseModel):
+    follower_id: int
+    following_id: int
+    is_following: bool

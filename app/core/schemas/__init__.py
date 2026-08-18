@@ -1,19 +1,19 @@
-from app.schemas.comment_schema import CommentCreate, CommentResponse
-from app.schemas.follow_schema import FollowAction, FollowResponse
-from app.schemas.like_schema import LikeAction, LikeCountResponse, LikeResponse
-from app.schemas.notification_schema import (
+from app.core.schemas.comment_schema import CommentCreate, CommentResponse, CommentUpdate
+from app.core.schemas.follow_schema import FollowAction, FollowResponse, FollowStatusResponse
+from app.core.schemas.like_schema import LikeAction, LikeCountResponse, LikeResponse
+from app.core.schemas.notification_schema import (
     NotificationCreate,
     NotificationMarkRead,
     NotificationResponse,
 )
-from app.schemas.post_schema import PostCreate, PostResponse, PostUpdate
-from app.schemas.token_schema import (
+from app.core.schemas.post_schema import PostCreate, PostResponse, PostUpdate
+from app.core.schemas.token_schema import (
     AuthMessageResponse,
     RefreshTokenRequest,
     RefreshTokenResponse,
     TokenPairResponse,
 )
-from app.schemas.user_schema import (
+from app.core.schemas.user_schema import (
     UserCreate,
     UserListResponse,
     UserLogin,
@@ -24,8 +24,10 @@ from app.schemas.user_schema import (
 __all__ = [
     "CommentCreate",
     "CommentResponse",
+    "CommentUpdate",
     "FollowAction",
     "FollowResponse",
+    "FollowStatusResponse",
     "LikeAction",
     "LikeCountResponse",
     "LikeResponse",

@@ -47,6 +47,15 @@ def fetch_comments_by_post(post_id: int) -> list[tuple[Any, ...]]:
 	return fetch_all(query, (post_id,))
 
 
+def update_comment(comment_id: int, content: str) -> None:
+	query = """
+	UPDATE comments
+	SET content = %s
+	WHERE id = %s;
+	"""
+	execute_write(query, (content, comment_id))
+
+
 def delete_comment(comment_id: int) -> None:
 	query = "DELETE FROM comments WHERE id = %s;"
 	execute_write(query, (comment_id,))
