@@ -21,7 +21,7 @@ def _comment_row_to_dict(comment_row: tuple) -> dict:
 
 
 
-def create_comment_for_user(user_id: int, payload: CommentCreate) -> dict:
+def create_comment_for_user(user_id: str, payload: CommentCreate) -> dict:
     user_row = fetch_user_by_id(user_id)
     if user_row is None:
         raise ValueError("User does not exist")
@@ -39,7 +39,7 @@ def create_comment_for_user(user_id: int, payload: CommentCreate) -> dict:
 
 
 
-def get_comment(comment_id: int) -> dict:
+def get_comment(comment_id: str) -> dict:
     comment_row = fetch_comment_by_id(comment_id)
     if comment_row is None:
         raise ValueError("Comment not found")
@@ -48,7 +48,7 @@ def get_comment(comment_id: int) -> dict:
 
 
 
-def list_comments_by_post(post_id: int) -> list[dict]:
+def list_comments_by_post(post_id: str) -> list[dict]:
     post_row = fetch_post_by_id(post_id)
     if post_row is None:
         raise ValueError("Post not found")
@@ -58,12 +58,12 @@ def list_comments_by_post(post_id: int) -> list[dict]:
 
 
 
-def update_comment_for_user(user_id: int, comment_id: int, payload: CommentUpdate) -> dict:
+def update_comment_for_user(user_id: str, comment_id: str, payload: CommentUpdate) -> dict:
     comment_row = fetch_comment_by_id(comment_id)
     if comment_row is None:
         raise ValueError("Comment not found")
 
-    comment_owner_id = int(comment_row[2])
+    comment_owner_id = str(comment_row[2])
     if comment_owner_id != user_id:
         raise PermissionError("You are not allowed to edit this comment")
 
@@ -76,12 +76,12 @@ def update_comment_for_user(user_id: int, comment_id: int, payload: CommentUpdat
 
 
 
-def delete_comment_for_user(user_id: int, comment_id: int) -> dict[str, str]:
+def delete_comment_for_user(user_id: str, comment_id: str) -> dict[str, str]:
     comment_row = fetch_comment_by_id(comment_id)
     if comment_row is None:
         raise ValueError("Comment not found")
 
-    comment_owner_id = int(comment_row[2])
+    comment_owner_id = str(comment_row[2])
     if comment_owner_id != user_id:
         raise PermissionError("You are not allowed to delete this comment")
 

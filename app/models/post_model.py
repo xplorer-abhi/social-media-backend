@@ -6,8 +6,8 @@ from app.models.base import execute_returning_one, execute_write, fetch_all, fet
 def create_posts_table() -> None:
     query = """
     CREATE TABLE IF NOT EXISTS posts (
-        id BIGSERIAL PRIMARY KEY,
-        user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         content TEXT NOT NULL CHECK (LENGTH(BTRIM(content)) > 0),
         image_url TEXT,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -17,7 +17,7 @@ def create_posts_table() -> None:
     execute_write(query)
 
 
-def insert_post(user_id: int, content: str, image_url: str | None = None) -> int:
+def insert_post(user_id: str, content: str, image_url: str | None = None) -> str:
     query = """
     INSERT INTO posts (user_id, content, image_url)
     VALUES (%s, %s, %s)
@@ -26,10 +26,10 @@ def insert_post(user_id: int, content: str, image_url: str | None = None) -> int
     row = execute_returning_one(query, (user_id, content, image_url))
     if row is None:
         raise RuntimeError("Failed to create post")
-    return int(row[0])
+    return str(row[0])
 
 
-def fetch_post_by_id(post_id: int) -> tuple[Any, ...] | None:
+def fetch_post_by_id(post_id: str) -> tuple[Any, ...] | None:
     query = """
     SELECT id, user_id, content, image_url, created_at, updated_at
     FROM posts
@@ -38,7 +38,7 @@ def fetch_post_by_id(post_id: int) -> tuple[Any, ...] | None:
     return fetch_one(query, (post_id,))
 
 
-def fetch_posts_by_user(user_id: int) -> list[tuple[Any, ...]]:
+def fetch_posts_by_user(user_id: str) -> list[tuple[Any, ...]]:
     query = """
     SELECT id, user_id, content, image_url, created_at, updated_at
     FROM posts
@@ -48,7 +48,7 @@ def fetch_posts_by_user(user_id: int) -> list[tuple[Any, ...]]:
     return fetch_all(query, (user_id,))
 
 
-def update_post(post_id: int, content: str, image_url: str | None = None) -> None:
+def update_post(post_id: str, content: str, image_url: str | None = None) -> None:
     query = """
     UPDATE posts
     SET content = %s,
@@ -59,6 +59,12 @@ def update_post(post_id: int, content: str, image_url: str | None = None) -> Non
     execute_write(query, (content, image_url, post_id))
 
 
-def delete_post(post_id: int) -> None:
+def delete_post(post_id: str) -> None:
     query = "DELETE FROM posts WHERE id = %s;"
     execute_write(query, (post_id,))
+
+
+def count_posts_by_user(user_id: str) -> int:
+    query = "SELECT COUNT(*) FROM posts WHERE user_id = %s;"
+    row = fetch_one(query, (user_id,))
+    return int(row[0]) if row is not None else 0

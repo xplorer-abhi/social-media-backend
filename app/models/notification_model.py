@@ -5,8 +5,8 @@ from app.models.base import execute_write, fetch_all
 def create_notifications_table() -> None:
     query = """
     CREATE TABLE IF NOT EXISTS notifications (
-        id BIGSERIAL PRIMARY KEY,
-        user_id BIGINT NOT NULL,
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL,
         type VARCHAR(50) NOT NULL,         -- e.g., 'like', 'comment', 'follow'
         message TEXT NOT NULL,             -- human-readable message
         is_read BOOLEAN NOT NULL DEFAULT FALSE,
@@ -17,7 +17,7 @@ def create_notifications_table() -> None:
     execute_write(query)
 
 
-def insert_notification(user_id: int, notif_type: str, message: str) -> None:
+def insert_notification(user_id: str, notif_type: str, message: str) -> None:
     query = """
     INSERT INTO notifications (user_id, type, message)
     VALUES (%s, %s, %s);
@@ -25,7 +25,7 @@ def insert_notification(user_id: int, notif_type: str, message: str) -> None:
     execute_write(query, (user_id, notif_type, message))
 
 
-def fetch_unread_notifications(user_id: int) -> list[tuple[Any, ...]]:
+def fetch_unread_notifications(user_id: str) -> list[tuple[Any, ...]]:
     query = """
     SELECT id, type, message, created_at
     FROM notifications
@@ -35,6 +35,6 @@ def fetch_unread_notifications(user_id: int) -> list[tuple[Any, ...]]:
     return fetch_all(query, (user_id,))
 
 
-def mark_notification_as_read(notification_id: int) -> None:
+def mark_notification_as_read(notification_id: str) -> None:
     query = "UPDATE notifications SET is_read = TRUE WHERE id = %s;"
     execute_write(query, (notification_id,))

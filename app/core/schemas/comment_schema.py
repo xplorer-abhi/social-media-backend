@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class CommentCreate(BaseModel):
-	post_id: int = Field(gt=0)
+	post_id: str
 	content: str = Field(min_length=1)
 
 
@@ -13,9 +13,9 @@ class CommentUpdate(BaseModel):
 
 
 class CommentResponse(BaseModel):
-	id: int
-	post_id: int
-	user_id: int
+	id: str
+	post_id: str
+	user_id: str
 	content: str
 	created_at: datetime
 

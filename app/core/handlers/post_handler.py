@@ -20,7 +20,7 @@ def _post_row_to_dict(post_row: tuple) -> dict:
     }
 
 
-def create_post_for_user(user_id: int, payload: PostCreate) -> dict:
+def create_post_for_user(user_id: str, payload: PostCreate) -> dict:
     user_row = fetch_user_by_id(user_id)
     if user_row is None:
         raise ValueError("User does not exist")
@@ -33,7 +33,7 @@ def create_post_for_user(user_id: int, payload: PostCreate) -> dict:
     return _post_row_to_dict(post_row)
 
 
-def get_post(post_id: int) -> dict:
+def get_post(post_id: str) -> dict:
     post_row = fetch_post_by_id(post_id)
     if post_row is None:
         raise ValueError("Post not found")
@@ -41,7 +41,7 @@ def get_post(post_id: int) -> dict:
     return _post_row_to_dict(post_row)
 
 
-def list_posts_by_user(user_id: int) -> list[dict]:
+def list_posts_by_user(user_id: str) -> list[dict]:
     user_row = fetch_user_by_id(user_id)
     if user_row is None:
         raise ValueError("User not found")
@@ -50,12 +50,12 @@ def list_posts_by_user(user_id: int) -> list[dict]:
     return [_post_row_to_dict(post) for post in posts]
 
 
-def update_post_for_user(user_id: int, post_id: int, payload: PostUpdate) -> dict:
+def update_post_for_user(user_id: str, post_id: str, payload: PostUpdate) -> dict:
     post_row = fetch_post_by_id(post_id)
     if post_row is None:
         raise ValueError("Post not found")
 
-    post_owner_id = int(post_row[1])
+    post_owner_id = str(post_row[1])
     if post_owner_id != user_id:
         raise PermissionError("You are not allowed to edit this post")
 
@@ -67,12 +67,12 @@ def update_post_for_user(user_id: int, post_id: int, payload: PostUpdate) -> dic
     return _post_row_to_dict(updated_post_row)
 
 
-def delete_post_for_user(user_id: int, post_id: int) -> dict[str, str]:
+def delete_post_for_user(user_id: str, post_id: str) -> dict[str, str]:
     post_row = fetch_post_by_id(post_id)
     if post_row is None:
         raise ValueError("Post not found")
 
-    post_owner_id = int(post_row[1])
+    post_owner_id = str(post_row[1])
     if post_owner_id != user_id:
         raise PermissionError("You are not allowed to delete this post")
 

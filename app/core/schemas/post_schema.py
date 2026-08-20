@@ -14,8 +14,8 @@ class PostUpdate(BaseModel):
 
 
 class PostResponse(BaseModel):
-	id: int
-	user_id: int
+	id: str
+	user_id: str
 	content: str
 	image_url: str | None
 	created_at: datetime

@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from app.core.handlers.auth_service import get_current_user_from_access_token
-from app.core.handlers.follow_service import (
+from app.core.handlers.auth_handler import get_current_user_from_access_token
+from app.core.handlers.follow_handler import (
     follow_user,
     get_follow_status,
     list_followers,
@@ -37,7 +37,7 @@ def get_current_user(token: str = Depends(_extract_bearer_token)) -> dict:
 @router.post("", response_model=FollowResponse)
 def create_follow(payload: FollowAction, current_user: dict = Depends(get_current_user)):
     try:
-        return follow_user(int(current_user["id"]), payload.following_id)
+        return follow_user(current_user["id"], payload.following_id)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
@@ -45,9 +45,9 @@ def create_follow(payload: FollowAction, current_user: dict = Depends(get_curren
 
 
 @router.delete("/user/{following_id}", response_model=AuthMessageResponse)
-def delete_follow(following_id: int, current_user: dict = Depends(get_current_user)):
+def delete_follow(following_id: str, current_user: dict = Depends(get_current_user)):
     try:
-        return unfollow_user(int(current_user["id"]), following_id)
+        return unfollow_user(current_user["id"], following_id)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except Exception as exc:
@@ -57,7 +57,7 @@ def delete_follow(following_id: int, current_user: dict = Depends(get_current_us
 @router.get("/me/following", response_model=list[FollowResponse])
 def get_my_following(current_user: dict = Depends(get_current_user)):
     try:
-        return list_following(int(current_user["id"]))
+        return list_following(current_user["id"])
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except Exception as exc:
@@ -65,7 +65,7 @@ def get_my_following(current_user: dict = Depends(get_current_user)):
 
 
 @router.get("/user/{user_id}/followers", response_model=list[FollowResponse])
-def get_user_followers(user_id: int, current_user: dict = Depends(get_current_user)):
+def get_user_followers(user_id: str, current_user: dict = Depends(get_current_user)):
     try:
         return list_followers(user_id)
     except ValueError as exc:
@@ -75,7 +75,7 @@ def get_user_followers(user_id: int, current_user: dict = Depends(get_current_us
 
 
 @router.get("/user/{user_id}/following", response_model=list[FollowResponse])
-def get_user_following(user_id: int, current_user: dict = Depends(get_current_user)):
+def get_user_following(user_id: str, current_user: dict = Depends(get_current_user)):
     try:
         return list_following(user_id)
     except ValueError as exc:
@@ -85,8 +85,8 @@ def get_user_following(user_id: int, current_user: dict = Depends(get_current_us
 
 
 @router.get("/user/{following_id}/status", response_model=FollowStatusResponse)
-def get_status(following_id: int, current_user: dict = Depends(get_current_user)):
+def get_status(following_id: str, current_user: dict = Depends(get_current_user)):
     try:
-        return get_follow_status(int(current_user["id"]), following_id)
+        return get_follow_status(current_user["id"], following_id)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc

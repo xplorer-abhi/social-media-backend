@@ -10,18 +10,23 @@ class UserCreate(BaseModel):
 
 
 class UserLogin(BaseModel):
-	email: str = Field(min_length=5, max_length=255)
+	identifier: str = Field(min_length=3, max_length=255, description="Email or username")
 	password: str = Field(min_length=8, max_length=128)
 
 
 class UserProfileUpdate(BaseModel):
+	username: str | None = Field(default=None, min_length=3, max_length=50)
 	bio: str | None = Field(default=None, max_length=1000)
 	profile_picture: str | None = Field(default=None, max_length=2048)
-	is_active: bool = True
+
+
+class UserPasswordChange(BaseModel):
+	current_password: str = Field(min_length=8, max_length=128)
+	new_password: str = Field(min_length=8, max_length=128)
 
 
 class UserResponse(BaseModel):
-	id: int
+	id: str
 	username: str
 	email: str
 	bio: str | None
@@ -34,11 +39,46 @@ class UserResponse(BaseModel):
 
 
 class UserListResponse(BaseModel):
-	id: int
+	id: str
 	username: str
 	email: str
 	is_active: bool
 	created_at: datetime
 	updated_at: datetime
+
+	model_config = ConfigDict(from_attributes=True)
+
+
+class UserSearchResult(BaseModel):
+	id: str
+	username: str
+	bio: str | None
+	profile_picture: str | None
+
+	model_config = ConfigDict(from_attributes=True)
+
+
+class UserProfileResponse(BaseModel):
+	id: str
+	username: str
+	email: str
+	bio: str | None
+	profile_picture: str | None
+	followers_count: int
+	following_count: int
+	created_at: datetime
+
+	model_config = ConfigDict(from_attributes=True)
+
+
+class PublicUserProfileResponse(BaseModel):
+	id: str
+	username: str
+	bio: str | None
+	profile_picture: str | None
+	followers_count: int
+	following_count: int
+	posts_count: int
+	created_at: datetime
 
 	model_config = ConfigDict(from_attributes=True)

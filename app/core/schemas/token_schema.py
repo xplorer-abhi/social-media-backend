@@ -14,8 +14,8 @@ class RefreshTokenRequest(BaseModel):
 
 
 class RefreshTokenResponse(BaseModel):
-    id: int
-    user_id: int
+    id: str
+    user_id: str
     token: str
     created_at: datetime
     expires_at: datetime

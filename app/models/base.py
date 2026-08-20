@@ -54,6 +54,11 @@ def fetch_all(query: str, params: tuple[Any, ...] | None = None) -> list[tuple[A
         connection.close()
 
 
+def ensure_uuid_extension() -> None:
+    """Enable pgcrypto so gen_random_uuid() is available for UUID primary keys."""
+    execute_write("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
+
+
 def create_all_tables() -> None:
     """Create all project tables in dependency-safe order."""
     from app.models.comment_model import create_comments_table
@@ -64,6 +69,7 @@ def create_all_tables() -> None:
     from app.models.refresh_token_model import create_refresh_tokens_table
     from app.models.user_model import create_users_table
 
+    ensure_uuid_extension()
     create_users_table()
     create_posts_table()
     create_comments_table()

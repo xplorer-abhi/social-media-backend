@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi import HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.db.connection import test_db_connection
 from app.services.auth import router as auth_router
@@ -8,7 +9,18 @@ from app.services.follows import router as follows_router
 from app.services.likes import router as likes_router
 from app.services.posts import router as posts_router
 
+origins = [
+    "http://localhost:5173",
+]
+
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(comments_router, prefix="/api/v1")
 app.include_router(follows_router, prefix="/api/v1")

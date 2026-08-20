@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from app.core.handlers.auth_service import get_current_user_from_access_token
-from app.core.handlers.post_service import (
+from app.core.handlers.auth_handler import get_current_user_from_access_token
+from app.core.handlers.post_handler import (
     create_post_for_user,
     delete_post_for_user,
     get_post,
@@ -37,7 +37,7 @@ def get_current_user(token: str = Depends(_extract_bearer_token)) -> dict:
 @router.post("", response_model=PostResponse)
 def create_post(payload: PostCreate, current_user: dict = Depends(get_current_user)):
     try:
-        return create_post_for_user(int(current_user["id"]), payload)
+        return create_post_for_user(current_user["id"], payload)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except PermissionError as exc:
@@ -49,7 +49,7 @@ def create_post(payload: PostCreate, current_user: dict = Depends(get_current_us
 @router.get("/me", response_model=list[PostResponse])
 def get_my_posts(current_user: dict = Depends(get_current_user)):
     try:
-        return list_posts_by_user(int(current_user["id"]))
+        return list_posts_by_user(current_user["id"])
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except Exception as exc:
@@ -57,7 +57,7 @@ def get_my_posts(current_user: dict = Depends(get_current_user)):
 
 
 @router.get("/user/{user_id}", response_model=list[PostResponse])
-def get_posts_by_user(user_id: int, current_user: dict = Depends(get_current_user)):
+def get_posts_by_user(user_id: str, current_user: dict = Depends(get_current_user)):
     try:
         return list_posts_by_user(user_id)
     except ValueError as exc:
@@ -67,7 +67,7 @@ def get_posts_by_user(user_id: int, current_user: dict = Depends(get_current_use
 
 
 @router.get("/{post_id}", response_model=PostResponse)
-def get_post_by_id(post_id: int, current_user: dict = Depends(get_current_user)):
+def get_post_by_id(post_id: str, current_user: dict = Depends(get_current_user)):
     try:
         return get_post(post_id)
     except ValueError as exc:
@@ -77,9 +77,9 @@ def get_post_by_id(post_id: int, current_user: dict = Depends(get_current_user))
 
 
 @router.put("/{post_id}", response_model=PostResponse)
-def update_post(post_id: int, payload: PostUpdate, current_user: dict = Depends(get_current_user)):
+def update_post(post_id: str, payload: PostUpdate, current_user: dict = Depends(get_current_user)):
     try:
-        return update_post_for_user(int(current_user["id"]), post_id, payload)
+        return update_post_for_user(current_user["id"], post_id, payload)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except PermissionError as exc:
@@ -89,9 +89,9 @@ def update_post(post_id: int, payload: PostUpdate, current_user: dict = Depends(
 
 
 @router.delete("/{post_id}", response_model=AuthMessageResponse)
-def delete_post(post_id: int, current_user: dict = Depends(get_current_user)):
+def delete_post(post_id: str, current_user: dict = Depends(get_current_user)):
     try:
-        return delete_post_for_user(int(current_user["id"]), post_id)
+        return delete_post_for_user(current_user["id"], post_id)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except PermissionError as exc:

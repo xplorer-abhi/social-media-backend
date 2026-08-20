@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from app.core.handlers.auth_service import get_current_user_from_access_token
-from app.core.handlers.comment_service import (
+from app.core.handlers.auth_handler import get_current_user_from_access_token
+from app.core.handlers.comment_handler import (
     create_comment_for_user,
     delete_comment_for_user,
     get_comment,
@@ -37,7 +37,7 @@ def get_current_user(token: str = Depends(_extract_bearer_token)) -> dict:
 @router.post("", response_model=CommentResponse)
 def create_comment(payload: CommentCreate, current_user: dict = Depends(get_current_user)):
     try:
-        return create_comment_for_user(int(current_user["id"]), payload)
+        return create_comment_for_user(current_user["id"], payload)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
@@ -45,7 +45,7 @@ def create_comment(payload: CommentCreate, current_user: dict = Depends(get_curr
 
 
 @router.get("/post/{post_id}", response_model=list[CommentResponse])
-def get_comments_by_post(post_id: int, current_user: dict = Depends(get_current_user)):
+def get_comments_by_post(post_id: str, current_user: dict = Depends(get_current_user)):
     try:
         return list_comments_by_post(post_id)
     except ValueError as exc:
@@ -55,7 +55,7 @@ def get_comments_by_post(post_id: int, current_user: dict = Depends(get_current_
 
 
 @router.get("/{comment_id}", response_model=CommentResponse)
-def get_comment_by_id(comment_id: int, current_user: dict = Depends(get_current_user)):
+def get_comment_by_id(comment_id: str, current_user: dict = Depends(get_current_user)):
     try:
         return get_comment(comment_id)
     except ValueError as exc:
@@ -65,9 +65,9 @@ def get_comment_by_id(comment_id: int, current_user: dict = Depends(get_current_
 
 
 @router.put("/{comment_id}", response_model=CommentResponse)
-def update_comment(comment_id: int, payload: CommentUpdate, current_user: dict = Depends(get_current_user)):
+def update_comment(comment_id: str, payload: CommentUpdate, current_user: dict = Depends(get_current_user)):
     try:
-        return update_comment_for_user(int(current_user["id"]), comment_id, payload)
+        return update_comment_for_user(current_user["id"], comment_id, payload)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except PermissionError as exc:
@@ -77,9 +77,9 @@ def update_comment(comment_id: int, payload: CommentUpdate, current_user: dict =
 
 
 @router.delete("/{comment_id}", response_model=AuthMessageResponse)
-def delete_comment(comment_id: int, current_user: dict = Depends(get_current_user)):
+def delete_comment(comment_id: str, current_user: dict = Depends(get_current_user)):
     try:
-        return delete_comment_for_user(int(current_user["id"]), comment_id)
+        return delete_comment_for_user(current_user["id"], comment_id)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except PermissionError as exc:

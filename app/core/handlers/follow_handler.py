@@ -14,7 +14,7 @@ def _follow_row_to_dict(follow_row: tuple) -> dict:
 
 
 
-def follow_user(follower_id: int, following_id: int) -> dict:
+def follow_user(follower_id: str, following_id: str) -> dict:
     follower_row = fetch_user_by_id(follower_id)
     if follower_row is None:
         raise ValueError("Follower user does not exist")
@@ -36,14 +36,14 @@ def follow_user(follower_id: int, following_id: int) -> dict:
 
     follows = fetch_following(follower_id)
     for follow_row in follows:
-        if int(follow_row[2]) == following_id:
+        if str(follow_row[2]) == following_id:
             return _follow_row_to_dict(follow_row)
 
     raise RuntimeError("Follow created but could not be fetched")
 
 
 
-def unfollow_user(follower_id: int, following_id: int) -> dict[str, str]:
+def unfollow_user(follower_id: str, following_id: str) -> dict[str, str]:
     if not is_following(follower_id, following_id):
         raise ValueError("Follow relationship not found")
 
@@ -52,7 +52,7 @@ def unfollow_user(follower_id: int, following_id: int) -> dict[str, str]:
 
 
 
-def list_followers(user_id: int) -> list[dict]:
+def list_followers(user_id: str) -> list[dict]:
     user_row = fetch_user_by_id(user_id)
     if user_row is None:
         raise ValueError("User not found")
@@ -62,7 +62,7 @@ def list_followers(user_id: int) -> list[dict]:
 
 
 
-def list_following(user_id: int) -> list[dict]:
+def list_following(user_id: str) -> list[dict]:
     user_row = fetch_user_by_id(user_id)
     if user_row is None:
         raise ValueError("User not found")
@@ -72,7 +72,7 @@ def list_following(user_id: int) -> list[dict]:
 
 
 
-def get_follow_status(follower_id: int, following_id: int) -> dict:
+def get_follow_status(follower_id: str, following_id: str) -> dict:
     return {
         "follower_id": follower_id,
         "following_id": following_id,

@@ -15,7 +15,7 @@ def _like_row_to_dict(like_row: tuple) -> dict:
 
 
 
-def like_post_for_user(user_id: int, post_id: int) -> dict:
+def like_post_for_user(user_id: str, post_id: str) -> dict:
     user_row = fetch_user_by_id(user_id)
     if user_row is None:
         raise ValueError("User does not exist")
@@ -41,7 +41,7 @@ def like_post_for_user(user_id: int, post_id: int) -> dict:
 
 
 
-def unlike_post_for_user(user_id: int, post_id: int) -> dict[str, str]:
+def unlike_post_for_user(user_id: str, post_id: str) -> dict[str, str]:
     existing_like = fetch_like(post_id, user_id)
     if existing_like is None:
         raise ValueError("Like not found")
@@ -51,7 +51,7 @@ def unlike_post_for_user(user_id: int, post_id: int) -> dict[str, str]:
 
 
 
-def list_likes_by_post(post_id: int) -> list[dict]:
+def list_likes_by_post(post_id: str) -> list[dict]:
     post_row = fetch_post_by_id(post_id)
     if post_row is None:
         raise ValueError("Post not found")
@@ -61,7 +61,7 @@ def list_likes_by_post(post_id: int) -> list[dict]:
 
 
 
-def get_like_count(post_id: int) -> dict:
+def get_like_count(post_id: str) -> dict:
     post_row = fetch_post_by_id(post_id)
     if post_row is None:
         raise ValueError("Post not found")

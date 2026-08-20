@@ -7,7 +7,7 @@ from jwt import ExpiredSignatureError, InvalidTokenError
 from app.core.config import settings
 
 
-def create_access_token(user_id: int) -> str:
+def create_access_token(user_id: str) -> str:
     now = datetime.now(UTC)
     expires_at = now + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {
@@ -20,7 +20,7 @@ def create_access_token(user_id: int) -> str:
     return jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
 
-def create_refresh_token(user_id: int) -> tuple[str, datetime]:
+def create_refresh_token(user_id: str) -> tuple[str, datetime]:
     now = datetime.now(UTC)
     expires_at = now + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
     payload = {

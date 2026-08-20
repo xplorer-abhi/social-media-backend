@@ -8,14 +8,14 @@ NotificationType = Literal["like", "comment", "follow", "system"]
 
 
 class NotificationCreate(BaseModel):
-    user_id: int = Field(gt=0)
+    user_id: str
     type: NotificationType
     message: str = Field(min_length=1, max_length=2000)
 
 
 class NotificationResponse(BaseModel):
-    id: int
-    user_id: int
+    id: str
+    user_id: str
     type: str
     message: str
     is_read: bool
@@ -25,4 +25,4 @@ class NotificationResponse(BaseModel):
 
 
 class NotificationMarkRead(BaseModel):
-    notification_id: int = Field(gt=0)
+    notification_id: str
